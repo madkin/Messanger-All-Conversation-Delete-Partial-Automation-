@@ -1,4 +1,4 @@
-# Messanger-All-Conversation-Delete-Partial-Automation
+# Messanger All Conversation Delete [Partial Automation]
 
 ## Description  
 
@@ -24,7 +24,8 @@ Additionally, the script allows users to **stop the process anytime by pressing 
    - **Mac**: Press `Cmd + Option + J` (Chrome) or `Cmd + Option + K` (Firefox).  
 3. **Copy and paste the script** into the console.  
 4. **Press Enter** to execute the script.  
-
+5. **Click on each Delete yourself** to complete the task for each chat .
+6. 
 ## How to Stop the Script  
 
 - **Press the "ESC" key** at any time to stop the script.  
