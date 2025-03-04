@@ -1,0 +1,100 @@
+let stopScript = false;
+let messagesDeleted = 0;
+let totalChats = 0;
+let chatsProcessed = 0;
+
+// Stop script when ESC is pressed
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        stopScript = true;
+        updateStatus("⛔ Script Stopped by User (ESC Pressed)");
+    }
+});
+
+// UI Enhancement
+if (!document.getElementById("fbCleanerUI")) {
+    let ui = document.createElement("div");
+    ui.id = "fbCleanerUI";
+    ui.style.position = "fixed";
+    ui.style.top = "10px";
+    ui.style.left = "50%";
+    ui.style.transform = "translateX(-50%)";
+    ui.style.backgroundColor = "rgba(72, 155, 219, 1)";
+    ui.style.color = "white";
+    ui.style.padding = "10px";
+    ui.style.borderRadius = "5px";
+    ui.style.zIndex = "9999999";
+    ui.innerHTML = `<b>Messenger Cleaner:</b> <span id="status">Starting...</span>`;
+    document.body.appendChild(ui);
+}
+
+function updateStatus(msg) {
+    document.getElementById("status").innerText = msg;
+    console.log(msg);
+}
+
+// Function to find and delete messages
+function deleteMessages() {
+    if (stopScript) {
+        updateStatus("⛔ Script Stopped");
+        return;
+    }
+
+    let messageRows = document.querySelectorAll("a[href*='/messages/']");
+    
+    if (totalChats === 0) {
+        totalChats = messageRows.length; // Set total number of chats only once
+    }
+
+    if (messageRows.length === 0) {
+        updateStatus(`✅ Finished! ${messagesDeleted} messages deleted.`);
+        return;
+    }
+
+    chatsProcessed++; // Increment the counter as we open each chat
+
+    let message = messageRows[0];
+    message.click();
+    updateStatus(`📨 Opening chat (${chatsProcessed}/${totalChats}) - ${messagesDeleted} deleted so far`);
+
+    setTimeout(() => {
+        let menuButton = document.querySelector(".x1k54i6l.xi81zsa"); // Messenger menu button
+        if (menuButton) {
+            menuButton.click();
+            updateStatus("⚙️ Opening options menu...");
+
+            setTimeout(() => {
+                let deleteOption = [...document.querySelectorAll('[role="menuitem"]')].find(el => el.innerText.includes("Delete"));
+                if (deleteOption) {
+                    deleteOption.click();
+                    updateStatus("🗑 Selecting 'Delete conversation'...");
+
+                    setTimeout(() => {
+                        let confirmDelete = [...document.querySelectorAll("button")].find(el => el.innerText.includes("Delete"));
+                        if (confirmDelete) {
+                            confirmDelete.click();
+                            messagesDeleted++;
+                            updateStatus(`✅ Deleted ${messagesDeleted} messages. (${chatsProcessed}/${totalChats} chats processed)`);
+
+                            setTimeout(() => {
+                                location.reload(); // Refresh to update message list
+                                deleteMessages();
+                            }, 2000);
+                        } else {
+                            updateStatus("⚠️ Could not find 'Delete' button. Retrying...");
+                            setTimeout(deleteMessages, 2000);
+                        }
+                    }, 800);
+                } else {
+                    updateStatus("⚠️ Could not find 'Delete conversation' option. Retrying...");
+                    setTimeout(deleteMessages, 2000);
+                }
+            }, 800);
+        } else {
+            updateStatus("⚠️ Could not find options menu button. Retrying...");
+            setTimeout(deleteMessages, 2000);
+        }
+    }, 1500);
+}
+
+setTimeout(deleteMessages, 2000);
