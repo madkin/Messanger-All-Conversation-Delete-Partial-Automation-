@@ -37,5 +37,5 @@ Additionally, the script allows users to **stop the process anytime by pressing 
 
 ---
 
-### Example Output in UI  
+
 
